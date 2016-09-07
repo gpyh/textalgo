@@ -1,0 +1,421 @@
+
+== Introduction
+
+Algorithme sur des séquences de symboles.
+
+- Rappels de notations et complexité algorithmiques
+- Combinatoire des mots
+- Recherche exacte d'un seul mot
+
+texte = suite de symboles relativement longue.
+mot = suite de symboles beaucoup plus courte.
+Objectif : trouver toutes les occurences du mot dans le texte.
+
+Problème apparemment simple mais il existe dans la littérature plus d'une
+centaine d'algorithmes y répondant. Il n'y a pas vraiment d'algorithme
+universel : certains algos sont adaptés à des alphabets, textes ou mots
+particuliers.
+
+- Recherche exacte d'un ensemble fini de mots
+
+Généralisation à la recherche de plusieurs mots dans un même texte.
+
+- Recherche approchée d'un motif court
+
+Parfois il est nécessaire de relaxer en s'autorisant une "distance" entre
+le mot recherché et les occurences.
+
+- Compression
+
+On s'interesse uniquement aux méthodes de compression sans perte appliquées
+à du texte.
+
+Hancart & Lecroq : Algorithmique du texte, 2011 en français, en rupture
+Hancart & Lecroq : Algorithms on strings, 2016 en anglais, traduit et augmenté
+
+Version française disponible ici :
+http://igm.univ-mlv.fr/~mac/ TODO
+
+Tous les supports de cours accessibles dans la liste de diffusion.
+
+== Notations algorithmiques
+
+=== Algorithmes
+
+On écrira beaucoup d'algos. Il faut se mettre d'accord sur la notation.
+En TP, le langage qui sera utilisé pour implémenter les algorithmes sera le C.
+
+.Algo
+----
+Algo nom (paramètres)
+  début
+    bloc d'instructions
+  fin
+----
+
+1 instruction par ligne.
+← symbole d'affectation. = pour le test d'égalité.
+
+
+.Instruction conditionnelle
+----
+TODO
+----
+
+.Instruction itérative
+----
+TODO
+----
+
+Comme on connaitra souvent le début et la fin de l'itération,
+on utilisera majoritairement des boucles `for` dont la syntaxe sera très
+commune.
+
+.Retour de valeur
+----
+TODO
+----
+
+=== Notations de Landau
+
+On cherchera à avoir des algorithmes optimaux en terme de complexité, soit
+temporelle soit spatiale.
+On s'interessera peu à la complexité spatiale ; principalement la temporelle.
+
+Compléxité temporelle : nombre d'instruction exécutées ≠ temps d'exécution.
+
+
+Trois types de complexité :
+
+- dans le meilleur des cas
+
+Pas très intéressant car c'est en général un nombre très restreint de cas
+que l'on va rencontrer.
+
+.Notation $Ω$
+[env.definition]
+--
+\[
+f(n) ∈ O(g(n))
+∃x_0 ∃ M > 0 tels que f(x) ≤ Mg(x) ∀ x > x_0
+\]
+
+- dans le pire des cas
+
+Pas plus significatif mais fourni au moins une borne.
+
+.Notation $O$
+[env.definition]
+--
+\[
+f(n) ∈ O(g(n))
+∃x_0 ∃ M > 0 tels que f(x) ≤ Mg(x) ∀ x > x_0
+\]
+
+- en moyenne
+
+Ce qui décrit le mieux la performance, mais nécessite de se fixer un modèle
+statistique. De plus, les analyses sont parfois très compliquées.
+
+On privilégie alors le pire des cas.
+
+// TODO : définir $Θ$. Est-ce que c'est le cas moyen ou autre chose ?
+
+Termes :
+
+Constant::
+Logarithmique::
+Linéraire::
+Quasi-linéraire (ou linéarithmique)::
+Quadratique::
+Polynomiale::
+Exponentielle::
+Factorielle::
+
+Les algorithmes de complexité exponentielle sont difficiles à utiliser
+en pratique et ne seront utilisés que pour des $n$ faibles.
+Les algorithmes de complexité factorielle sont en pratique inutilisables
+pour des tailles non triviales.
+
+Ordres de grandeur :
+
+// TODO reproduire tableau
+.Machine à 1 téra-flops (10^12 opérations par seconde)
+
+== Recherche exacte d'un mot
+
+2 situations :
+
+Si on connait le texte à l'avance, on crée une structure de données
+permettant d'effectuer des requêtes pour différents motifs.
+
+Si on connait le motif à l'avance, on crée une structure de données
+permettant de rechercher ce motif dans n'importe quel texte.
+
+Dans ce cours on se place exclusivement dans le second cas.
+
+Un premier algorithme naïf : on fait glisser une fenêtre le long du texte
+de la même taille du motif et on compare les symboles lus avec ceux du motif.
+Si on ne conserve pas d'information entre deux glissements de fenêtre,
+l'algorithme sera nécessairement quadratique.
+Le premier algorithme linéaire apparu dans les années 70 réutilise les comparaisons
+précedentes pour éliminer des cas.
+La meilleur stratégie dans cette situation est à chaque glissement de d'abord
+comparer le dernier caractère du motif. S'il ne correspond pas à celui de la
+fenêtre, il ne sera alors pas nécessaire de comparer les caractères précédents
+et on peut dès lors faire glisser la fenêtre.
+
+BF : brute-force (algo naïf)
+KMP : Knuth-Morris-Pratt (comparaison en commençant par le début)
+HOR : TODO (comparaison en commençant par la fin)
+
+// TODO récupérer un screenshot de l'appli du prof
+
+Alphabet binaire :
+TODO interprétation
+
+Alphabet de 4 symboles sur un génome :
+Dès la longueur 4, l'algorithme HOR se montre bien plus performant.
+L'algorithme de HOR n'est intéressant que si le texte est déjà chargé en
+mémoire. S'il faut le charger, tous les symboles seronts nécessairement regardés.
+L'algorithme linéaire KMP n'est pas bien efficace.
+
+== Combinatoire des mots
+
+=== Alphabets et mots
+
+[env.definition]
+--
+Un alphabet $A$ est un ensemble fini non vide de $lettres$, dites aussi
+$symboles$ et $caractères$.
+--
+
+Exemples :
+
+ADN : acides nucléiques, paires de bases, bases
+ARN : acides nucléiques
+Protéines : acides aminés
+Alphabet binaire : signaux, donnés brutes
+UTF-8 : texte en langage naturel arbitraire
+
+Dans ce cours, pas de sémantique. C'est seulement l'aspect syntaxique qui nous
+intéresse, donc les exemples ne sont pas forcément pertinents.
+
+[env.definition]
+--
+TODO mots
+--
+
+[env.definition]
+--
+L'ensemble de tous les mots finis sur l'alphabet A, appelé _monoïde libre
+engendré par A_ est noté $A^* $
+--
+
+L'ensemble de tous les mots finis non vides sur l'alphabet est noté $A^+ $.
+
+[env.definition]
+--
+La longueur d'un mot $x ∈ A^* $ est le nombre de symboles qui le compose.
+Elle est notée $|x|$.
+--
+
+Le mot vide est l'unique mot de longueur 0.
+
+[env.definition]
+--
+On note $x[i]$ pour $i = 0, 1, ..., |x|-1$ la lettre du mot $x$ à l'indice $i$.
+// TODO
+--
+
+[env.definition]
+--
+Deux mots $x$ et $y$ sont égaux si et seulement si : \[
+|x| = |y| ∧ ∀ i, 0 ≤ i ≤ |x| - 1, x[i] = y[i].\]
+On note naturellement $x = y$.
+--
+
+// TODO le reste
+
+[env.definition]
+--
+Le produit ou _concaténation_ de deux mots $x$ et $y$ est le mot composé
+des lettres de $x$ suivies de lettres de $y$.
+On le note $x \cdot y$ ou plus simplement $xy$.
+--
+
+Le mot vide, noté $ε$, est l'élément neutre pour la concaténation.
+En effet, $εx = xε = x$.
+
+C'est de cette opération qu'est munit le monoïde libre $A^* $.
+
+[env.definition]
+--
+Pour un mot $x ∈ A^* $ et un entier naturel $n ∈ ℕ$ on définit la
+n-ième puissance de $x$ notée $x^n$ par TODO
+--
+
+[env.definition]
+--
+Si $z = xy$, on définit les quotients à gauche et à droite tels que
+$x = zy^{-1}$ et TODO
+--
+
+[env.definition]
+--
+Le _renversé_ (aussi appelé _image miroir_ ou _miroir_) d'un mot $x ∈ A^*$
+TODO
+--
+
+[env.definition]
+--
+Un mot $x$ est _facteur_ d'un mot y$ s'il existe deux mots $u$ et $v$ tels
+que $y = uxv$.
+--
+
+[env.definition]
+--
+Un mot $x$ est _préfixe_ d'un mot y$ s'il existe un mot $v$ tel
+que $y = xv$.
+--
+
+[env.definition]
+--
+Un mot $x$ est _suffixe_ d'un mot y$ s'il existe un mot $u$ tel
+que $y = ux$.
+--
+
+Un suffixe ou préfixe d'un mot $x$ est aussi un facteur de $x$.
+Un facteur d'un mot $x$ est aussi un sous-mot de $x$.
+
+Un mot est suffixe, préfixe, facteur et sous-mot de lui-même.
+Le mot vide est suffixe, préfixe, facteur et sous-mot de tous les mots.
+
+// TODO sous-mot
+
+Exemple :
+
+$y = $ `acgat`
+`ga` est un facteur de $y$
+`acg` est un préfixe de $y$
+`gat` est un suffixe de $y$
+`ca` est un sous-mot de $y$
+
+[env.definition]
+--
+Un facteur, préfixe, suffixe ou sous-mot $x$ de $y$ est qualifié de _propre_
+si $x ≠ y$.
+--
+
+****
+Dans la littérature anglophone :
+
+Mot:
+_word_ dans la communauté combinatoire.
+_string_ dans la communauté algorithmique.
+
+Facteur:
+_substring_ est plutôt américain
+_factor_ est préférable
+
+Préfixe:
+_prefix_
+
+Suffixe:
+_suffix_
+
+Sous-mot:
+_subsequence_ est le terme préférable
+
+Le terme _subword_ peut être recontré aussi bien pour signifier facteur
+que sous-mot. Il faut prendre gare à cette ambiguité et bien lire la définition
+de l'auteur.
+****
+
+// Notations comme relation d'ordre
+
+On note respectivement Fact(x), Préf(x), Suff(x) et TODO
+
+[env.definition]
+--
+L'ordre lexicographique, noté $≤$ est un ordre sur les mots induit par un
+ordre sur les lettres noté de la même façon;
+Pour $x, y ∈ A^*$, $x ≤ y$ si et seulement si $x pref y$
+ou x = uav et y = ubw avec u,v,w ∈ A^* , a,b ∈ A et a < b.
+--
+
+****
+Il faut bien définir en amont l'ordre lexicographique sur les lettres
+car celui-ci est arbitraire. S'il existe un candidat naturel pour les 26 lettres
+de l'alphabet latin, les caractères spéciaux viennent compliquer ce choix.
+****
+
+Exemple :
+
+A = { a, c, g, t }
+a < c < g < t
+
+On a acgat < agact < agcat < agcatta < at
+
+****
+On dira plus _petit_ ou _grand_ quand on compare selon l'ordre lexicographique.
+On dira plus _court_ ou _long_ quand on compare selon la longeur.
+****
+
+Si x est un facteur de y on dit qu x apparaît dans y ou qu'il y a une
+occurence de x dans y.
+Toute occurence TODO
+
+La notation entre crochets définie sur les lettres est étendue au facteur.
+On définit le facteur de x de la position i à la position j par
+x[i..j] = x[i]x[i+1]...x[j]
+pour 0 ≤ i ≤ j ≤ |x|-1.
+x[i..j] = ε si i > j.
+
+On s'arrangera toujours pour respecter l'ordre 0 ≤ i ≤ j ≤ |x|-1
+
+Extrait du Lemme de Lévi, 1944
+
+Pour tous mos x, y, z, t ∈ A^*
+xy = zt implique qu'il existe un mot $u ∈ A*$ tel que
+
+- soit x = zu et t = uy
+- soit z = xu et y = ut
+
+Graphiquement:
+
+TODO
+Fig 1
+
+La plupart du temps en s'arrangera pour donner des preuves graphiques
+comme ci-dessus.
+
+Les mots de Fibonacci
+
+Les nombres de Fibonacci sont définis par
+F_0 = 0, F_1 = 1 et F_n = F_{n-1} + F_{n-2} pour n ≥ 2
+
+Les mots de Fibonacci sont définis par
+f_0 = ε, f_1 = b, f_2 =a et f_n = f_{n-1}f{n-2} pour n ≥ 3
+
+On a |f_n| = F_{n}.
+
+TODO Snip 1
+
+Les mots de Fibonacci sont une généralisation des mots de Sturm
+
+Périodicités et bords
+
+Soit x un mot non vide.
+
+Un entier p tel que 0 <p <= |x| est une _période_ de x si
+x[i] = x[i+p] pour 0 <= i <= |x|+p-1
+
+TODO
+
+
+
+
+
+
+
