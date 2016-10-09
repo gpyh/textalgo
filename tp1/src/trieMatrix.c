@@ -1,20 +1,22 @@
 #include <stdlib.h>
 #include <stdbool.h>
+#include <string.h>
+#include "trie.h"
 
-typedef struct {
+struct _trie {
   int maxNode;
   int nextNode;
-  int** transition;
+  int** transitions;
   char* finite;
-}* Trie;
+};
 
 Trie createTrie(int maxNode) {
-  int** transition = malloc(maxNode * (sizeof (int*)));
-  for(int i = 0; i++; i < maxNode) {
-    transition[i] = calloc(maxNode, sizeof (int));
+  int** transitions = malloc(maxNode * (sizeof (int*)));
+  for(int i = 0; i < maxNode; i++) {
+    transitions[i] = calloc(maxNode, sizeof (int));
   }
   Trie trie;
-  trie->transition = transition;
+  trie->transitions = transitions;
   return trie;
 }
 
