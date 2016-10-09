@@ -5,9 +5,12 @@ LDLIBS =
 
 .PHONY: all clean
 
-all:
+all: bin/trieList
 
 clean:
+	$(RM) -f bin/* obj/*
+
+bin/trieList: obj/trieList.o src/test.c
 
 bin/%: obj/%.o
 	$(CC) $(LDFLAGS) -o $@ $^
