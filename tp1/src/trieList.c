@@ -29,10 +29,10 @@ Trie createTrie(int maxNode) {
   return trie;
 }
 
-void addTransition(Trie trie, int node, int target, unsigned char l) {
+void addTransition(Trie trie, int node, int target, unsigned char a) {
   List transition = malloc(sizeof (struct _list));
   transition->targetNode = target;
-  transition->letter = l;
+  transition->letter = a;
   // Add the transition in the head of the adjacency list
   transition->next = trie->transitions[node];
   trie->transitions[node] = transition;
@@ -40,7 +40,7 @@ void addTransition(Trie trie, int node, int target, unsigned char l) {
 
 // Finds a transition of label `a` starting from `node`
 // If there is such a transition, returns the target node
-// Else, returns -1
+// Else, returns -1.
 int follow(Trie trie, int node, unsigned char a) {
   List transition = trie->transitions[node];
   while(transition != NULL && transition->letter != a) {
@@ -57,7 +57,7 @@ int follow(Trie trie, int node, unsigned char a) {
 // labelled by `w`.
 // Returns the last node if the word is succesfuly appended.
 // Returns -1 if the trie is full.
-int append(Trie trie, int node, unsigned char *w) {
+int append(Trie trie, int node, unsigned char* w) {
   int n = node; // current node
   int i = 0;    // current index in w
   int s = trie->maxNode - trie->nextNode; // number of nodes left
@@ -82,7 +82,7 @@ bool insertTrie(Trie trie, unsigned char *w) {
   unsigned char a = w[0]; // current letter
   while(a != '\0') {
     f = follow(trie, n, a);
-    if(f == -1) {
+    if(f < 0) {
       end = append(trie, n, &w[i]);
       break;
     }
